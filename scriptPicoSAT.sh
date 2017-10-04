@@ -1,5 +1,5 @@
 #!/bin/bash
-
+ 
 start_measuring_time() {
   read start < <(date +'%s')
 }
@@ -13,7 +13,7 @@ show_elapsed_time() {
 }
 
 for f in ~/SAT_solver/random3SAT/vars-300*.cnf
-#for f in ~/SAT_solver/random3SAT/vars-150-7.cnf
+#for f in ~/SAT_solver/random3SAT/vars-250-6.cnf
 do
     echo
     echo "------------------"

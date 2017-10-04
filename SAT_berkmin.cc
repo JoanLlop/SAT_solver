@@ -22,6 +22,7 @@ uint nProp = 0,
 
 
 vector<int> puntuation;
+list<int> conflict_clauses;
 
 void readClauses( ){
   // Skip comments
@@ -85,7 +86,8 @@ bool propagateGivesConflict ( ) {
 	  }
 	  if (not someLitTrue and numUndefs == 0){
 		  ++counter;
-		  puntuation[abs(lit)] += 32;
+		  conflict_clauses.push_front(i);
+		  puntuation[abs(lit)] += 100;
 		  return true; // conflict! all lits false
 	  }
 	  else if (not someLitTrue and numUndefs == 1) setLiteralToTrue(lastLitUndef);	
@@ -117,6 +119,14 @@ void backtrack(){
 int getNextDecisionLiteral(){
 	int max_p = 0,
 		m 	  = 0;
+	if (conflict_clauses.size() >= 0){
+		int i = conflict_clauses.front();
+		for (uint k = 0; k < clauses[i].size(); ++k){
+			int lit = clauses[i][k];
+			if (model[abs(lit)] == UNDEF and puntuation[abs(lit)] >= max_p){ max_p = puntuation[abs(lit)]; m = abs(lit);}
+		}
+	}
+	if (m != 0) return m;
 	for (uint i = 1; i <= numVars; ++i){
 		if (model[i] == UNDEF and puntuation[i] >= max_p){ max_p = puntuation[i]; m = i;}
 	}
@@ -163,7 +173,7 @@ int main(){
     if (counter == 32){
 		counter = 0;
 		for (uint i = 1; i <= numVars; ++i){
-			puntuation[i] /= 2;
+			puntuation[i] /= 4;
 		}
 	}
     if (decisionLit == 0) { checkmodel(); cout << "SATISFIABLE" << endl << endl << "m: " << nProp << " propagations" << endl << "m: " << nDecisions << " decisions" << endl; return 20; }
